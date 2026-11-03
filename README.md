@@ -33,6 +33,8 @@ Valheim's 1-8 hotbar is locked to the top inventory row. Hotkey Sliding lets you
 Download the [**Valheim Mod Installer**](https://github.com/Glutoblop/ValheimPlugins) and run it (`Start-Installer.bat` on Windows, `start-installer.sh` on Linux/macOS), point it at your Valheim folder, tick **Hotkey Sliding** and click **Install / Update**. It installs BepInEx for you if needed.
 
 ### Manual
+Download from the [latest release](https://github.com/Glutoblop/HotkeySliding/releases/latest) ([`HotkeySliding.zip`](https://github.com/Glutoblop/HotkeySliding/releases/latest/download/HotkeySliding.zip): unzip into your Valheim folder), or:
+
 1. Install [BepInExPack_Valheim](https://thunderstore.io/c/valheim/p/denikson/BepInExPack_Valheim/) (5.4.2360 or newer) into your Valheim folder.
 2. Download [`dist/HotkeySliding.dll`](https://github.com/Glutoblop/HotkeySliding/raw/main/dist/HotkeySliding.dll).
 3. Copy it to `<Valheim>/BepInEx/plugins/HotkeySliding/HotkeySliding.dll`.
