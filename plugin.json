@@ -3,7 +3,7 @@
   "id": "HotkeySliding",
   "name": "Hotkey Sliding",
   "guid": "jordan.valheim.hotkeysliding",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "Glutoblop",
   "description": "Slide the 1-8 hotbar down through every inventory row with a rebindable key, so any row can become your active hotbar.",
   "repo": "Glutoblop/HotkeySliding",

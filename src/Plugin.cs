@@ -23,7 +23,7 @@ namespace HotkeySliding
     {
         public const string Guid = "jordan.valheim.hotkeysliding";
         public const string Name = "Hotkey Sliding";
-        public const string Version = "0.1.0";
+        public const string Version = "0.1.1";
 
         internal static Plugin Instance;
 
