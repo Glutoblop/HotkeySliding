@@ -1,14 +1,14 @@
 # Hotkey Sliding
 
-![version](https://img.shields.io/badge/version-0.1.0-blue) ![valheim](https://img.shields.io/badge/Valheim-1.0.21-orange) ![client](https://img.shields.io/badge/client--side-only-green)
+![version](https://img.shields.io/badge/version-0.2.0-blue) ![valheim](https://img.shields.io/badge/Valheim-1.0.21-orange) ![client](https://img.shields.io/badge/client--side-only-green)
 
 A BepInEx plugin for Valheim.
 
 Valheim's 1-8 hotbar is locked to the top inventory row. Hotkey Sliding lets you slide it down through every row, so one key press turns row 2 (or 3, or 4...) into your active hotbar: swap between a combat loadout, a building loadout and a food row without dragging items around.
 
 ## Features
-- **Next hotbar row** / **Previous hotbar row** keys, rebindable in the game's own *Settings -> Controls* menu like any vanilla key (default: double-tap Left Ctrl for next row; previous row unbound).
-- Press / Tap / DoubleTap trigger modes, so you can share a key with Crouch without conflicts.
+- **Hotbar Up** / **Hotbar Down** keys, rebindable in the game's own *Settings -> Controls* menu like any vanilla key (default: double-tap Left Ctrl for Hotbar Down; Hotbar Up unbound).
+- **Hotbar Input** option in *Settings -> Controls*: *Press* or *Double Press* (default, so you can share a key with Crouch without conflicts).
 - A small `Row X/Y` label next to the hotbar, and the 1-8 labels in the inventory grid move to the active row.
 - Respects inventory-expanding mods (row count is read live).
 - Ignored while typing in chat or any text field. Only ever affects your own inventory.
@@ -17,7 +17,7 @@ Valheim's 1-8 hotbar is locked to the top inventory row. Hotkey Sliding lets you
 | Section | Key | Default | What it does |
 |---|---|---|---|
 | Keys | NextRowKeyOverride / PreviousRowKeyOverride | None | Fallback key if you don't want to use the Controls menu. |
-| Keys | NextRowTrigger / PreviousRowTrigger | DoubleTap / Press | How the key must be pressed. |
+| Keys | HotbarInput | DoublePress | `Press` or `DoublePress` for both keys (same as the in-game Hotbar Input option). |
 | Keys | ReverseDirection | false | Swap next/previous. |
 | Keys | TapMaxSeconds / DoubleTapWindowSeconds | 0.25 / 0.35 | Tap timing. |
 | Keys | AllowWhileInventoryOpen | true | Allow sliding with the inventory open. |
@@ -44,7 +44,7 @@ Download from the [latest release](https://github.com/Glutoblop/HotkeySliding/re
 
 | | |
 |---|---|
-| Plugin version | **0.1.0** |
+| Plugin version | **0.2.0** |
 | Last tested on Valheim | **1.0.21** (network version 41, Steam build 26249040) on 2026-11-03 |
 | BepInExPack_Valheim | 5.4.2360 |
 | Multiplayer | Client-side only: works on vanilla servers, other players don't need it |

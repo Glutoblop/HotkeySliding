@@ -5,7 +5,16 @@ using UnityEngine;
 
 namespace HotkeySliding
 {
-    public enum TriggerMode
+    /// <summary>How the Hotbar Up / Hotbar Down keys must be pressed (Settings -> Controls -> "Hotbar Input").</summary>
+    public enum HotbarInputMode
+    {
+        /// <summary>Slide the moment the key goes down.</summary>
+        Press,
+        /// <summary>Two quick clean taps (lets the key double as e.g. Crouch).</summary>
+        DoublePress,
+    }
+
+    internal enum TriggerMode
     {
         /// <summary>Fires the moment the key goes down.</summary>
         Press,
@@ -28,9 +37,8 @@ namespace HotkeySliding
         internal static Plugin Instance;
 
         internal static ConfigEntry<KeyCode> NextRowKeyOverride;
-        internal static ConfigEntry<TriggerMode> NextRowTrigger;
         internal static ConfigEntry<KeyCode> PreviousRowKeyOverride;
-        internal static ConfigEntry<TriggerMode> PreviousRowTrigger;
+        internal static ConfigEntry<HotbarInputMode> HotbarInput;
         internal static ConfigEntry<bool> ReverseDirection;
         internal static ConfigEntry<float> TapMaxSeconds;
         internal static ConfigEntry<float> DoubleTapWindowSeconds;
@@ -53,28 +61,24 @@ namespace HotkeySliding
         {
             Instance = this;
 
-            // The keys themselves are bound in Settings -> Controls ("Next hotbar row" / "Previous hotbar row"),
+            // The keys themselves are bound in Settings -> Controls ("Hotbar Down" / "Hotbar Up"),
             // like any vanilla key. These overrides exist only as a fallback (e.g. if a game update breaks the menu entry).
             NextRowKeyOverride = Config.Bind("Keys", "NextRowKeyOverride", KeyCode.None,
-                "Normally leave this at None and bind 'Next hotbar row' in the game's Settings -> Controls " +
+                "Normally leave this at None and bind 'Hotbar Down' in the game's Settings -> Controls " +
                 "(default there: Left Ctrl). If set to a key, that key is used instead and the Controls binding is ignored.");
 
-            NextRowTrigger = Config.Bind("Keys", "NextRowTrigger", TriggerMode.DoubleTap,
-                "How the 'Next hotbar row' key must be pressed. Press = on key down. Tap = quick press+release with no " +
-                "other key pressed in between. DoubleTap = two such taps in quick succession.\n" +
-                "DoubleTap is the default because the default key (Left Ctrl) is also Valheim's Crouch, and crouch is a " +
-                "toggle: a single tap already toggles crouch, so Tap would cycle rows every time you crouch. A double tap " +
-                "toggles crouch twice (net: no change) and slides the hotbar. If you bind a key the game doesn't use, Press is fine.");
-
             PreviousRowKeyOverride = Config.Bind("Keys", "PreviousRowKeyOverride", KeyCode.None,
-                "Normally leave this at None and bind 'Previous hotbar row' in Settings -> Controls (unbound by default). " +
+                "Normally leave this at None and bind 'Hotbar Up' in Settings -> Controls (unbound by default). " +
                 "If set to a key, that key is used instead and the Controls binding is ignored.");
 
-            PreviousRowTrigger = Config.Bind("Keys", "PreviousRowTrigger", TriggerMode.Press,
-                "How the 'Previous hotbar row' key must be pressed (same options as NextRowTrigger).");
+            HotbarInput = Config.Bind("Keys", "HotbarInput", HotbarInputMode.DoublePress,
+                "How the Hotbar Up / Hotbar Down keys must be pressed (also settable in Settings -> Controls -> Hotbar Input). " +
+                "Press = on key down. DoublePress = two quick taps with no other key pressed in between.\n" +
+                "DoublePress is the default because the default key (Left Ctrl) is also Valheim's Crouch, a toggle: " +
+                "a double tap toggles crouch twice (net: no change) and slides the hotbar. If you bind keys the game doesn't use, Press is fine.");
 
             ReverseDirection = Config.Bind("Keys", "ReverseDirection", false,
-                "Swap directions: 'Next hotbar row' goes up a row (1 -> last -> ... -> 2) and 'Previous hotbar row' goes down.");
+                "Swap directions: 'Hotbar Down' goes up a row (1 -> last -> ... -> 2) and 'Hotbar Up' goes down.");
 
             TapMaxSeconds = Config.Bind("Keys", "TapMaxSeconds", 0.25f,
                 new ConfigDescription("Longest key hold that still counts as a tap.", new AcceptableValueRange<float>(0.05f, 2f)));
@@ -123,10 +127,11 @@ namespace HotkeySliding
             float tapMax = TapMaxSeconds.Value;
             float window = DoubleTapWindowSeconds.Value;
             int dir = ReverseDirection.Value ? -1 : 1;
+            TriggerMode mode = HotbarInput.Value == HotbarInputMode.Press ? TriggerMode.Press : TriggerMode.DoubleTap;
 
-            if (_nextTrigger.Update(NextRowKeyOverride.Value, NextRowTrigger.Value, tapMax, window, allowed))
+            if (_nextTrigger.Update(NextRowKeyOverride.Value, mode, tapMax, window, allowed))
                 HotbarState.Step(player, dir);
-            if (_prevTrigger.Update(PreviousRowKeyOverride.Value, PreviousRowTrigger.Value, tapMax, window, allowed))
+            if (_prevTrigger.Update(PreviousRowKeyOverride.Value, mode, tapMax, window, allowed))
                 HotbarState.Step(player, -dir);
         }
 
