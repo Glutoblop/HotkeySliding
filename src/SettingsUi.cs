@@ -58,8 +58,15 @@ namespace HotkeySliding
             AddRow(settings, template, Bindings.NextRow, "Next hotbar row", 1, step, autoLayout, added);
             AddRow(settings, template, Bindings.PrevRow, "Previous hotbar row", 2, step, autoLayout, added);
 
-            if (!autoLayout)
-                GrowScrollContent(settings, added);
+            // Vanilla lays keys out as a fixed m_keyRows x m_keyCols grid (column-major). Extra cells would spill into
+            // a new, clipped column (or row), so grow the grid to fit and keep vanilla's gamepad navigation consistent.
+            FitGrid(settings, parent);
+
+            // With a layout group the new cells land after the last vanilla row, which can be past the scroll
+            // content's fixed height (clipped). Lay out now so their positions are real, then grow the content.
+            if (autoLayout)
+                LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)parent);
+            GrowScrollContent(settings, added);
 
             if (!_loggedLayout)
             {
@@ -95,6 +102,44 @@ namespace HotkeySliding
                 m_blockedButtons = template.m_blockedButtons ?? Array.Empty<KeyCode>(),
             });
             added.Add(rt);
+        }
+
+        private static void FitGrid(KeyboardMouseSettings settings, Transform parent)
+        {
+            int total = settings.m_keys.Count;
+            int cols = Mathf.Max(1, settings.m_keyCols);
+            int rows = Mathf.Max(1, settings.m_keyRows);
+            GridLayoutGroup grid = parent.GetComponent<GridLayoutGroup>();
+
+            if (grid != null)
+            {
+                Plugin.Log($"Controls grid: constraint={grid.constraint} count={grid.constraintCount} " +
+                           $"startAxis={grid.startAxis} cell={grid.cellSize} spacing={grid.spacing} " +
+                           $"size={((RectTransform)parent).rect.size} keyRows={rows} keyCols={cols} total={total}");
+                if (grid.constraint == GridLayoutGroup.Constraint.FixedColumnCount)
+                    cols = Mathf.Max(1, grid.constraintCount);
+            }
+
+            if (grid != null && grid.constraint == GridLayoutGroup.Constraint.FixedRowCount)
+                rows = Mathf.Max(1, grid.constraintCount);
+            // Never shrink below what vanilla's own keys already occupy.
+            rows = Mathf.Max(rows, Mathf.CeilToInt((total - 2) / (float)cols));
+            int neededRows = Mathf.CeilToInt(total / (float)cols);
+            if (neededRows <= rows)
+                return;
+
+            float extra = (neededRows - rows) * (grid != null ? grid.cellSize.y + grid.spacing.y : 30f);
+            settings.m_keyRows = neededRows;
+            if (grid != null && grid.constraint == GridLayoutGroup.Constraint.FixedRowCount)
+                grid.constraintCount = neededRows;
+
+            // The grid's own rect is usually a fixed size; make it taller (top edge stays put).
+            RectTransform prt = (RectTransform)parent;
+            if (prt.GetComponent<ContentSizeFitter>() == null)
+            {
+                prt.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, prt.rect.height + extra);
+                prt.anchoredPosition -= new Vector2(0f, extra * (1f - prt.pivot.y));
+            }
         }
 
         /// <summary>Sets the row's caption: the first text that isn't part of the key button.</summary>
