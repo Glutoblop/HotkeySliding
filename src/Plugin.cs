@@ -42,13 +42,11 @@ namespace HotkeySliding
         internal static ConfigEntry<bool> ReverseDirection;
         internal static ConfigEntry<float> TapMaxSeconds;
         internal static ConfigEntry<float> DoubleTapWindowSeconds;
-        internal static ConfigEntry<bool> AllowWhileInventoryOpen;
 
         internal static ConfigEntry<bool> ResetOnDeathOrLogout;
 
         internal static ConfigEntry<bool> ShowIndicator;
         internal static ConfigEntry<bool> HideIndicatorOnFirstRow;
-        internal static ConfigEntry<string> IndicatorFormat;
         internal static ConfigEntry<float> IndicatorOffsetX;
         internal static ConfigEntry<float> IndicatorOffsetY;
         internal static ConfigEntry<bool> HighlightRowInInventory;
@@ -86,26 +84,20 @@ namespace HotkeySliding
             DoubleTapWindowSeconds = Config.Bind("Keys", "DoubleTapWindowSeconds", 0.35f,
                 new ConfigDescription("Max time between releasing the first tap and pressing the second.", new AcceptableValueRange<float>(0.05f, 2f)));
 
-            AllowWhileInventoryOpen = Config.Bind("Keys", "AllowWhileInventoryOpen", true,
-                "Allow switching rows while the inventory is open (never while a text field has focus).");
-
             ResetOnDeathOrLogout = Config.Bind("General", "ResetOnDeathOrLogout", false,
                 "Return to row 1 when you die or log out / switch character.");
 
             ShowIndicator = Config.Bind("HUD", "ShowRowIndicator", true,
-                "Show a small 'Row X/Y' label next to the hotkey bar.");
+                "Show a circle of inventory row segments next to the hotkey bar.");
 
             HideIndicatorOnFirstRow = Config.Bind("HUD", "HideIndicatorOnFirstRow", false,
-                "Hide the label while row 1 (the vanilla hotbar) is active.");
-
-            IndicatorFormat = Config.Bind("HUD", "IndicatorFormat", "Row {0}/{1}",
-                "Label text. {0} = active row (1-based), {1} = number of rows.");
+                "Hide the row indicator while row 1 (the vanilla hotbar) is active.");
 
             IndicatorOffsetX = Config.Bind("HUD", "IndicatorOffsetX", 8f,
-                "Horizontal offset of the label from the right edge of hotbar slot 8.");
+                "Horizontal offset of the indicator from the right edge of hotbar slot 8.");
 
             IndicatorOffsetY = Config.Bind("HUD", "IndicatorOffsetY", 0f,
-                "Vertical offset of the label from the vertical centre of the hotbar.");
+                "Vertical offset of the indicator from the vertical centre of the hotbar.");
 
             HighlightRowInInventory = Config.Bind("HUD", "HighlightRowInInventory", true,
                 "Move the 1-8 key labels in the inventory grid onto the active row.");
@@ -118,7 +110,7 @@ namespace HotkeySliding
             Logger.LogInfo($"{Name} {Version} loaded");
         }
 
-        private void Update()
+        private void LateUpdate()
         {
             Player player = Player.m_localPlayer;
             HotbarState.TrackPlayer(player);
@@ -138,7 +130,7 @@ namespace HotkeySliding
         private void OnDestroy()
         {
             _harmony?.UnpatchSelf();
-            RowIndicator.DestroyAll();
+            HotbarHud.DestroyAll();
         }
 
         internal static void Log(string msg) => Instance?.Logger.LogInfo(msg);

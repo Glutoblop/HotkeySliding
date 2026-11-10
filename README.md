@@ -9,7 +9,8 @@ Valheim's 1-8 hotbar is locked to the top inventory row. Hotkey Sliding lets you
 ## Features
 - **Hotbar Up** / **Hotbar Down** keys, rebindable in the game's own *Settings -> Controls* menu like any vanilla key (default: double-tap Left Ctrl for Hotbar Down; Hotbar Up unbound).
 - **Hotbar Input** option in *Settings -> Controls*: *Press* or *Double Press* (default, so you can share a key with Crouch without conflicts).
-- A small `Row X/Y` label next to the hotbar, and the 1-8 labels in the inventory grid move to the active row.
+- A circular indicator next to the hotbar has one triangular segment per inventory row. The active row is gold and the other segments are faded.
+- The hotbar hides and its keys are disabled while the inventory, crafting, build-piece picker, or full map is open. The 1-8 labels in the inventory grid mark the selected row.
 - Respects inventory-expanding mods (row count is read live).
 - Ignored while typing in chat or any text field. Only ever affects your own inventory.
 
@@ -20,11 +21,9 @@ Valheim's 1-8 hotbar is locked to the top inventory row. Hotkey Sliding lets you
 | Keys | HotbarInput | DoublePress | `Press` or `DoublePress` for both keys (same as the in-game Hotbar Input option). |
 | Keys | ReverseDirection | false | Swap next/previous. |
 | Keys | TapMaxSeconds / DoubleTapWindowSeconds | 0.25 / 0.35 | Tap timing. |
-| Keys | AllowWhileInventoryOpen | true | Allow sliding with the inventory open. |
 | General | ResetOnDeathOrLogout | false | Go back to row 1 on death / logout. |
-| HUD | ShowRowIndicator / HideIndicatorOnFirstRow | true / false | `Row X/Y` label. |
-| HUD | IndicatorFormat | `Row {0}/{1}` | Label text. |
-| HUD | IndicatorOffsetX / IndicatorOffsetY | 8 / 0 | Label position. |
+| HUD | ShowRowIndicator / HideIndicatorOnFirstRow | true / false | Show the circular indicator and optionally hide it on the first row. |
+| HUD | IndicatorOffsetX / IndicatorOffsetY | 8 / 0 | Indicator position. |
 | HUD | HighlightRowInInventory | true | Move the 1-8 labels in the inventory grid. |
 
 ## Install

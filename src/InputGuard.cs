@@ -4,12 +4,17 @@ using UnityEngine.EventSystems;
 
 namespace HotkeySliding
 {
-    /// <summary>Decides whether a row switch is allowed right now (mirrors Player.TakeInput, minus the inventory check).</summary>
+    /// <summary>Decides whether a row switch is allowed right now.</summary>
     internal static class InputGuard
     {
+        internal static bool IsHotbarScreenOpen() =>
+            InventoryGui.IsVisible() || Minimap.IsOpen() || Hud.IsPieceSelectionVisible();
+
         internal static bool CanCycle(Player player)
         {
             if (player == null || player.IsDead() || player.InCutscene() || player.IsTeleporting())
+                return false;
+            if (IsHotbarScreenOpen())
                 return false;
             if (Chat.instance != null && Chat.instance.HasFocus())
                 return false;
@@ -19,11 +24,9 @@ namespace HotkeySliding
                 return false; // settings window open / rebinding a key
             if (TextViewer.instance != null && TextViewer.instance.IsVisible())
                 return false;
-            if (Minimap.IsOpen() || GameCamera.InFreeFly() || PlayerCustomizaton.IsBarberGuiVisible())
+            if (GameCamera.InFreeFly() || PlayerCustomizaton.IsBarberGuiVisible())
                 return false;
             if (Hud.instance != null && Hud.instance.m_buildUi != null && Hud.instance.m_buildUi.SearchFieldFocused)
-                return false;
-            if (InventoryGui.IsVisible() && !Plugin.AllowWhileInventoryOpen.Value)
                 return false;
             if (TextFieldFocused())
                 return false;

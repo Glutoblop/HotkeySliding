@@ -9,7 +9,7 @@ namespace HotkeySliding
     //   Inventory.GetBoundItems    -> items with m_gridPos.y == 0            (HotkeyBar.UpdateIcons, the HUD bar)
     //   Inventory.GetHotbar        -> items with m_gridPos.y == 0            (gamepad radial "hotbar" group)
     //   InventoryGrid.UpdateGui    -> "1".."8" binding labels on row 0 only (cosmetic)
-    // Each patch only kicks in for the local player's own inventory and only when a row other than 0 is active.
+    // Row remapping applies only to the local player's own inventory.
 
     [HarmonyPatch(typeof(Player), nameof(Player.UseHotbarItem))]
     internal static class UseHotbarItemPatch
@@ -18,6 +18,8 @@ namespace HotkeySliding
         {
             if (__instance != Player.m_localPlayer)
                 return true;
+            if (InputGuard.IsHotbarScreenOpen())
+                return false;
             int row = HotbarState.ActiveRow(__instance);
             if (row == 0)
                 return true;
@@ -81,7 +83,7 @@ namespace HotkeySliding
     [HarmonyPatch(typeof(HotkeyBar), nameof(HotkeyBar.Update))]
     internal static class HotkeyBarUpdatePatch
     {
-        private static void Postfix(HotkeyBar __instance) => RowIndicator.Refresh(__instance);
+        private static void Postfix(HotkeyBar __instance) => HotbarHud.Attach(__instance);
     }
 
     [HarmonyPatch(typeof(Player), nameof(Player.OnDeath))]
